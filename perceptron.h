@@ -13,29 +13,45 @@ void rand_permute(unsigned int, unsigned int[]);
 /* code for learning a perceptron, specialized for 2-dimensional data that are grouped into 2 classes */
 
 template <typename T>
-double *perceptron(unsigned int width, unsigned int height, std::vector<T**> P, std::vector<T**> N, unsigned int max_itr, double rtol, double alpha = DEFAULT_ALPHA){
-	unsigned int i, j, k, ci, itr = 0, p = P.size(), s = p + N.size(), m = width * height, *p_arr = new unsigned int[s];
+double *perceptron(unsigned int width, unsigned int height, const std::vector<T**>* const P[], const std::vector<T**>* const N[], unsigned int max_itr, double rtol, double alpha = DEFAULT_ALPHA){
+	unsigned int i, j, k, c, ci, itr = 0, s = 0, s_p = sizeof(P) / sizeof(std::vector<T**>*), s_n = sizeof(N) / sizeof(std::vector<T**>*), m = width * height, p, *e_arr = new unsigned int[s_p + s_n], *p_arr;
 	double d, f, err = 1.0, *w = new double[m + 1];
+	for (i = 0; i < s_p; ++i){
+		e_arr[i] = (s += (*P[i]).size()); 
+	}
+	p = s;
+	for (i = 0; i < s_n; ++i){
+		e_arr[s_p + i] = (s += (*N[i]).size());
+	}
 	for (i = 0; i <= m; ++i){
 		w[i] = 0.0;
 	}
+	p_arr = new unsigned int[s];
 	while (itr++ <= max_itr && err >= rtol){
 		err = 0.0;
 		rand_permute(s, p_arr);
-		for (i = 0; i <= m; ++i){
+		for (i = 0; i <= s; ++i){
 			f = 0.0;
 			if (p_arr[i] >= p){   //the inner-product term
+				c = s_p;
+				while (e_arr[c] <= p_arr[i]){
+					++c;
+				}
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){ 
 						ci = j * width + k;
-						f += w[ci] * N[p_arr[i] - p][j][k];
+						f += w[ci] * (*N[c - s_p])[p_arr[i] - p][j][k];
 					}
 				}
 			}else{
+				c = 0;
+				while (e_arr[c] <= p_arr[i]){
+					++c;
+				}
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){ 
 						ci = j * width + k;
-						f += w[ci] * P[p_arr[i]][j][k];
+						f += w[ci] * (*P[c])[p_arr[i]][j][k];
 					}
 				}
 			}
@@ -48,7 +64,7 @@ double *perceptron(unsigned int width, unsigned int height, std::vector<T**> P, 
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){
 						ci = j * width + k;
-						w[ci] -= alpha * d * N[p_arr[i] - p][j][k];
+						w[ci] -= alpha * d * (*N[c - s_p])[p_arr[i] - p][j][k];
 					}
 				}
 			}else{
@@ -59,7 +75,7 @@ double *perceptron(unsigned int width, unsigned int height, std::vector<T**> P, 
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){
 						ci = j * width + k;
-						w[ci] -= alpha * d * P[p_arr[i]][j][k];
+						w[ci] -= alpha * d * (*P[c])[p_arr[i]][j][k];
 					}
 				}
 			}
@@ -68,6 +84,7 @@ double *perceptron(unsigned int width, unsigned int height, std::vector<T**> P, 
 		std::cout<<"error rate after iteration "<<itr<<": "<<err<<"\n";
 	}
 	delete [] p_arr;
+	delete [] e_arr;
 	return w;
 }
 
