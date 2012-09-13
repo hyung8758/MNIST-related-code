@@ -1,4 +1,4 @@
 MNIST-related-code
 ==================
 
-this repository contains some code for simple experiments with MNIST dataset
+this repository contains code for some simple experiments with the MNIST dataset
