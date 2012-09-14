@@ -2,8 +2,8 @@
 #include "perceptron.h"
 
 #define VERBOSE true 
-#define MAX_ITER 1000
-#define TOL .01
+#define MAX_ITER 200
+#define TOL .04
 #define ALPHA 1e-11
 
 unsigned int perceptron(const unsigned int, const unsigned int, double *[10][10], unsigned char ** const);
