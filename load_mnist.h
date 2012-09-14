@@ -20,7 +20,8 @@ unsigned int endian_swap(unsigned int & bytes){
 
 int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<unsigned char **> mnist_digits[10]){
 	bool img_diff_endian = false, lbl_diff_endian = false; 
-	unsigned char label, **current_img;
+	unsigned char label;
+	unsigned char **current_img;
 	unsigned int i, j, k, magic_number, img_n_sample, lbl_n_sample;
 	std::fstream img_f(img_fn, std::ios_base::in | std::ios_base::binary), lbl_f(lbl_fn, std::ios_base::in | std::ios_base::binary);
 	if (!img_f.is_open()){
@@ -138,7 +139,7 @@ int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, 
 	//std::cout<<width<<", "<<height<<std::endl;
 	for (i = 0; i < img_n_sample; ++i){
 		lbl_f.read((char *)&label, 1);
-		current_img = new double*[height]; 
+		current_img = new double* [height]; 
 		for (j = 0; j < height; ++j){
 			current_img[j] = new double[width];
 			for (k = 0; k < width; ++k){

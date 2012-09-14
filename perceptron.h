@@ -14,7 +14,7 @@ void rand_permute(unsigned int, unsigned int[]);
 /* code for learning a perceptron, specialized for 2-dimensional data that are grouped into 2 classes */
 
 template <typename T>
-double *perceptron(unsigned int width, unsigned int height, const std::vector<T**> S[], const unsigned int P[], const unsigned int N[], unsigned int max_itr, double rtol, double alpha = DEFAULT_ALPHA, bool verbose = true){
+double *perceptron(unsigned int width, unsigned int height, const std::vector<T**> S[], const unsigned int P[], const unsigned int N[], const unsigned int max_itr, const double rtol, const double alpha = DEFAULT_ALPHA, const bool verbose = true){
 	unsigned int i, j, k, c, b_i, itr = 0, s = 0, s_p = P[0], s_n = N[0], m = width * height, p, *e_arr = new unsigned int[s_p + s_n], *p_arr;
 	double d, f, err = 1.0, *w = new double[m + 1];
 	if (verbose){
@@ -85,6 +85,18 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 	delete [] p_arr;
 	delete [] e_arr;
 	return w;
+}
+
+template <typename T>
+bool f(const unsigned int width, const unsigned int height, const double *w, T ** const img){
+	double y = 0.0;
+	for (unsigned int i = 0; i < height; ++i){
+		for (unsigned int j = 0; j < width; ++j, ++w){
+			y += *w * img[i][j];
+		}
+	}
+	y += *w;
+	return y >= 0;
 }
 
 std::string partition_str(const unsigned int pt[]){
