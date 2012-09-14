@@ -1,7 +1,7 @@
 #ifndef PERCEPTRON_H
 #define PERCEPTRON_H
 
-#define DEFAULT_ALPHA .000001
+#define DEFAULT_ALPHA .0000000001
 
 #include <time.h>
 #include <stdlib.h>
@@ -31,11 +31,11 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 		w[i] = 0.0;
 	}
 	p_arr = new unsigned int[s];
-	while (itr++ <= max_itr && err >= rtol){
+	while (itr++ < max_itr && err >= rtol){
 		err = 0.0;
 		rand_permute(s, p_arr);
 		for (i = 0; i < s; ++i){
-			f = 0.0;
+			f = w[m];   //plus the bias term 
 			c = 0;
 			if (p_arr[i] >= p){   //the inner-product term
 				b_i = p;
@@ -45,6 +45,15 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){ 
 						f += w[j * width + k] * S[N[c + 1]][p_arr[i] - b_i][j][k];
+					}
+				}
+				d = f + 1;
+				if (f >= 0){
+					err += 1.0 / s;
+				}
+				for (j = 0; j < height; ++j){
+					for (k = 0; k < width; ++k){
+						w[j * width + k] -= alpha * d * S[N[c + 1]][p_arr[i] - b_i][j][k];
 					}
 				}
 			}else{
@@ -57,19 +66,6 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 						f += w[j * width + k] * S[P[c + 1]][p_arr[i] - b_i][j][k];
 					}
 				}
-			}
-			f += w[m];   //plus the bias term 
-			if (p_arr[i] >= p){
-				d = f + 1;
-				if (f >= 0){
-					err += 1.0 / s;
-				}
-				for (j = 0; j < height; ++j){
-					for (k = 0; k < width; ++k){
-						w[j * width + k] -= alpha * d * S[N[c + 1]][p_arr[i] - b_i][j][k];
-					}
-				}
-			}else{
 				d = f - 1;
 				if (f < 0){
 					err += 1.0 / s;
