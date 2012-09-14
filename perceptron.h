@@ -14,7 +14,7 @@ void rand_permute(unsigned int, unsigned int[]);
 /* code for learning a perceptron, specialized for 2-dimensional data that are grouped into 2 classes */
 
 template <typename T>
-double *perceptron(unsigned int width, unsigned int height, const std::vector<T**> S[], const unsigned int P[], const unsigned int N[], const unsigned int max_itr, const double rtol, const double alpha = DEFAULT_ALPHA, const bool verbose = true){
+double *perceptron(const unsigned int width, const unsigned int height, const std::vector<T**> S[], const unsigned int P[], const unsigned int N[], const unsigned int max_itr, const double rtol, const double alpha = DEFAULT_ALPHA, const bool verbose = true){
 	unsigned int i, j, k, c, b_i, itr = 0, s = 0, s_p = P[0], s_n = N[0], m = width * height, p, *e_arr = new unsigned int[s_p + s_n], *p_arr;
 	double d, f, err = 1.0, *w = new double[m + 1];
 	if (verbose){

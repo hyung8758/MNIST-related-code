@@ -158,7 +158,7 @@ int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, 
 /* code for freeing all images in memory (tested with valgrind memcheck) */
 
 template <typename T>
-void free_mnist(unsigned int height, std::vector<T **> mnist_digits[]){
+void free_mnist(const unsigned int height, const std::vector<T **> mnist_digits[]){
 	unsigned int i, j, k;
 	for (i = 0; i < 10; ++i){
 		for (j = 0; j < mnist_digits[i].size(); ++j){
@@ -172,7 +172,7 @@ void free_mnist(unsigned int height, std::vector<T **> mnist_digits[]){
 
 /* code for showing an approximate image of a digit */ 
 
-void display_mnist_digit(unsigned int width, unsigned int height, unsigned char ** const mnist_digit){
+void display_mnist_digit(const unsigned int width, const unsigned int height, unsigned char ** const mnist_digit){
 	for (unsigned int i = 0; i < height; ++i){
 		for (unsigned int j = 0; j < width; ++j){
 			std::cout<<(mnist_digit[i][j] >= 128 ? "#" : ".")<<",";	
