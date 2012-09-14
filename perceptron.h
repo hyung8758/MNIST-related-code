@@ -8,20 +8,24 @@
 #include <vector>
 #include <iostream>
 
+std::string partition_str(const unsigned int[]);
 void rand_permute(unsigned int, unsigned int[]);
 
 /* code for learning a perceptron, specialized for 2-dimensional data that are grouped into 2 classes */
 
 template <typename T>
-double *perceptron(unsigned int width, unsigned int height, const std::vector<T**>* const P[], const std::vector<T**>* const N[], unsigned int max_itr, double rtol, double alpha = DEFAULT_ALPHA){
-	unsigned int i, j, k, c, ci, itr = 0, s = 0, s_p = sizeof(P) / sizeof(std::vector<T**>*), s_n = sizeof(N) / sizeof(std::vector<T**>*), m = width * height, p, *e_arr = new unsigned int[s_p + s_n], *p_arr;
+double *perceptron(unsigned int width, unsigned int height, const std::vector<T**> S[], const unsigned int P[], const unsigned int N[], unsigned int max_itr, double rtol, double alpha = DEFAULT_ALPHA, bool verbose = true){
+	unsigned int i, j, k, c, b_i, itr = 0, s = 0, s_p = P[0], s_n = N[0], m = width * height, p, *e_arr = new unsigned int[s_p + s_n], *p_arr;
 	double d, f, err = 1.0, *w = new double[m + 1];
+	if (verbose){
+		std::cout<<"\nseparating "<<partition_str(P)<<" and "<<partition_str(N)<<":\n\n";
+	}
 	for (i = 0; i < s_p; ++i){
-		e_arr[i] = (s += (*P[i]).size()); 
+		e_arr[i] = (s += S[P[i + 1]].size()); 
 	}
 	p = s;
 	for (i = 0; i < s_n; ++i){
-		e_arr[s_p + i] = (s += (*N[i]).size());
+		e_arr[s_p + i] = (s += S[N[i + 1]].size());
 	}
 	for (i = 0; i <= m; ++i){
 		w[i] = 0.0;
@@ -30,28 +34,27 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 	while (itr++ <= max_itr && err >= rtol){
 		err = 0.0;
 		rand_permute(s, p_arr);
-		for (i = 0; i <= s; ++i){
+		for (i = 0; i < s; ++i){
 			f = 0.0;
+			c = 0;
 			if (p_arr[i] >= p){   //the inner-product term
-				c = s_p;
-				while (e_arr[c] <= p_arr[i]){
-					++c;
+				b_i = p;
+				while (e_arr[c + s_p] <= p_arr[i]){
+					b_i += S[N[++c]].size();  //note: value of c is off by 1
 				}
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){ 
-						ci = j * width + k;
-						f += w[ci] * (*N[c - s_p])[p_arr[i] - p][j][k];
+						f += w[j * width + k] * S[N[c + 1]][p_arr[i] - b_i][j][k];
 					}
 				}
 			}else{
-				c = 0;
+				b_i = 0;
 				while (e_arr[c] <= p_arr[i]){
-					++c;
+					b_i += S[P[++c]].size();   //note: value of c is off by 1
 				}
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){ 
-						ci = j * width + k;
-						f += w[ci] * (*P[c])[p_arr[i]][j][k];
+						f += w[j * width + k] * S[P[c + 1]][p_arr[i] - b_i][j][k];
 					}
 				}
 			}
@@ -63,8 +66,7 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 				}
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){
-						ci = j * width + k;
-						w[ci] -= alpha * d * (*N[c - s_p])[p_arr[i] - p][j][k];
+						w[j * width + k] -= alpha * d * S[N[c + 1]][p_arr[i] - b_i][j][k];
 					}
 				}
 			}else{
@@ -74,27 +76,44 @@ double *perceptron(unsigned int width, unsigned int height, const std::vector<T*
 				}
 				for (j = 0; j < height; ++j){
 					for (k = 0; k < width; ++k){
-						ci = j * width + k;
-						w[ci] -= alpha * d * (*P[c])[p_arr[i]][j][k];
+						w[j * width + k] -= alpha * d * S[P[c + 1]][p_arr[i] - b_i][j][k];
 					}
 				}
 			}
 			w[m] -= alpha * d;
 		}
-		std::cout<<"error rate after iteration "<<itr<<": "<<err<<"\n";
+		if (verbose){
+			std::cout<<"error rate after iteration "<<itr<<": "<<err<<"\n";
+		}
 	}
 	delete [] p_arr;
 	delete [] e_arr;
 	return w;
 }
 
+std::string partition_str(const unsigned int pt[]){
+	unsigned int i;
+	std::string ret = "{";
+	for (i = 1; i < pt[0]; ++i){
+		ret += pt[i] + '0';
+		ret += ", ";
+	}
+	ret += pt[i] + '0';
+	ret += "}";
+	return ret;
+}
+
 void rand_permute(unsigned int m, unsigned int a[]){
 	unsigned int i, j;
 	srand (time(0));
-	for (i = 0; i < m; ++i){
-		j = rand() % (i + 1);
-		a[i] = a[j];
-		a[j] = i;
+	a[0] = 0;
+	for (i = 1; i < m; ++i){
+		if ( (j = rand() % (i + 1)) != i ){
+			a[i] = a[j];
+			a[j] = i;
+		}else{
+			a[i] = i;
+		}
 	}
 }
 
