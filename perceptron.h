@@ -3,13 +3,9 @@
 
 #define DEFAULT_ALPHA .0000000001
 
-#include <time.h>
-#include <stdlib.h>
 #include <vector>
 #include <iostream>
-
-std::string partition_str(const unsigned int[]);
-void rand_permute(unsigned int, unsigned int[]);
+#include "misc.h"
 
 /* code for learning a perceptron, specialized for 2-dimensional data that are grouped into 2 classes */
 
@@ -97,32 +93,6 @@ bool f(const unsigned int width, const unsigned int height, const double *w, T *
 	}
 	y += *w;
 	return y >= 0;
-}
-
-std::string partition_str(const unsigned int pt[]){
-	unsigned int i;
-	std::string ret = "{";
-	for (i = 1; i < pt[0]; ++i){
-		ret += pt[i] + '0';
-		ret += ", ";
-	}
-	ret += pt[i] + '0';
-	ret += "}";
-	return ret;
-}
-
-void rand_permute(unsigned int m, unsigned int a[]){
-	unsigned int i, j;
-	srand (time(0));
-	a[0] = 0;
-	for (i = 1; i < m; ++i){
-		if ( (j = rand() % (i + 1)) != i ){
-			a[i] = a[j];
-			a[j] = i;
-		}else{
-			a[i] = i;
-		}
-	}
 }
 
 #endif
