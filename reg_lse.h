@@ -2,6 +2,7 @@
 #define PERCEPTRON_H
 
 #define DEFAULT_LAMBDA .1    //the regularization coefficient for the |w|^2 term
+#define G_RAD 1.0
 
 #include <vector>
 #include <iostream>
@@ -41,9 +42,9 @@ class reg_lse{
 			w = new double[n];
 			K = gsl_matrix_alloc(n, n);
 			for (i = 0; i < n; ++i){
-				gsl_matrix_set(K, i, i, rad<T>(width, height, 1.0, X[i], X[i]) + lambda);
+				gsl_matrix_set(K, i, i, rad<T>(width, height, G_RAD, X[i], X[i]) + lambda);
 				for (j = i + 1; j < n; ++j){
-					v = rad<T>(width, height, 1.0, X[i], X[j]);    //note: can choose any kernel function here 
+					v = rad<T>(width, height, G_RAD, X[i], X[j]);    //note: can choose any kernel function here 
 					gsl_matrix_set(K, i, j, v);
 					gsl_matrix_set(K, j, i, v);
 				}
@@ -66,7 +67,7 @@ class reg_lse{
 			unsigned int i;
 			double y = 0.0;
 			for (i = 0; i < n; ++i){
-				y += rad<T>(width, height, 1.0, x, X[i]) * w[i];
+				y += rad<T>(width, height, G_RAD, x, X[i]) * w[i];
 			}
 			return y >= 0.0;
 		}

@@ -40,4 +40,4 @@ test_reg_lse: $(TEST_REG_LSE)
 	$(CC) $(LDFLAGS) `pkg-config --libs gsl` $(TEST_REG_LSE) -o $@
 
 clean:
-	rm -rf *.o $(EXECUTABLES) *.png
+	rm -rf *.png *.gch *.o $(EXECUTABLES)
