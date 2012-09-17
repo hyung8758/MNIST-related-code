@@ -7,8 +7,9 @@ TEST_LOAD_MNIST=test_load_mnist.o
 TEST_PERCEPTRON=test_perceptron.o
 TEST_PERCEPTRON_ALT=test_perceptron_alt.o
 TEST_NAIVE_BAYES=test_naive_bayes.o
+TEST_REG_LSE=test_reg_lse.o
 OBJECTS=$(SOURCES:.cc=.o)
-EXECUTABLES=test_libgsl test_png_util test_load_mnist test_perceptron test_perceptron_alt test_naive_bayes 
+EXECUTABLES=test_libgsl test_png_util test_load_mnist test_perceptron test_perceptron_alt test_naive_bayes test_reg_lse
 
 .PHONY: clean
 
@@ -34,6 +35,9 @@ test_perceptron_alt: $(TEST_PERCEPTRON_ALT)
 
 test_naive_bayes: $(TEST_NAIVE_BAYES)
 	$(CC) $(LDFLAGS) $(TEST_NAIVE_BAYES) -o $@
+
+test_reg_lse: $(TEST_REG_LSE)
+	$(CC) $(LDFLAGS) `pkg-config --libs gsl` $(TEST_REG_LSE) -o $@
 
 clean:
 	rm -rf *.o $(EXECUTABLES) *.png

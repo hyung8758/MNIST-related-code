@@ -92,7 +92,7 @@ bool f(const unsigned int width, const unsigned int height, const double *w, T *
 		}
 	}
 	y += *w;
-	return y >= 0;
+	return y >= 0.0;
 }
 
 #endif

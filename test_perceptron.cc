@@ -11,7 +11,7 @@ unsigned int perceptron(const unsigned int, const unsigned int, double *[10][10]
 int main(int argc, char *argv[]){
 	unsigned int i, j, score, m, training_width, training_height, testing_width, testing_height, p[2], n[2];
 	double *w[10][10];
-	std::vector<unsigned char **> training_mnist_digits[10], testing_mnist_digits[10];
+	std::vector<unsigned char**> training_mnist_digits[10], testing_mnist_digits[10];
 	srand(time(0));
 	if (argc == 5){
 		load_mnist(argv[1], argv[2], training_width, training_height, training_mnist_digits);

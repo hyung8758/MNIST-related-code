@@ -1,8 +1,6 @@
 #include "load_mnist.h"
 #include "naive_bayes.h"
 
-unsigned int perceptron(const unsigned int, const unsigned int, double *[10][10], unsigned char ** const);
-
 int main(int argc, char *argv[]){
 	unsigned int i, j, score, training_width, training_height, testing_width, testing_height;
 	std::vector<unsigned char **> training_mnist_digits[10], testing_mnist_digits[10];

@@ -5,6 +5,7 @@
 #define IMAGE_MAGIC_NUMBER 0x00000803
 
 #include <stdlib.h>
+#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -18,7 +19,7 @@ unsigned int endian_swap(unsigned int & bytes){
 
 /* code for loading sample images of each digit */
 
-int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<unsigned char **> mnist_digits[10]){
+int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<unsigned char**> mnist_digits[10]){
 	bool img_diff_endian = false, lbl_diff_endian = false; 
 	unsigned char label;
 	unsigned char **current_img;
@@ -87,11 +88,11 @@ int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned in
 
 /* code for loading normalized images of each digit */
 
-int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<double **> mnist_digits[10]){
+int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<double**> mnist_digits[10], unsigned int limit = 0){
 	bool img_diff_endian = false, lbl_diff_endian = false; 
 	unsigned char label, pixel;
-	unsigned int i, j, k, magic_number, img_n_sample, lbl_n_sample;
-	double **current_img;
+	unsigned int i, j, k, magic_number, img_n_sample, lbl_n_sample, n_pixel;
+	double e_x = 0, e_x2 = 0, s, v, **current_img;
 	std::fstream img_f(img_fn, std::ios_base::in | std::ios_base::binary), lbl_f(lbl_fn, std::ios_base::in | std::ios_base::binary);
 	if (!img_f.is_open()){
 		std::cerr<<"error opening '"<<img_fn<<"'\n";
@@ -137,6 +138,7 @@ int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, 
 		endian_swap(height);
 	}
 	//std::cout<<width<<", "<<height<<std::endl;
+	n_pixel = img_n_sample * width * height;
 	for (i = 0; i < img_n_sample; ++i){
 		lbl_f.read((char *)&label, 1);
 		current_img = new double* [height]; 
@@ -144,11 +146,26 @@ int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, 
 			current_img[j] = new double[width];
 			for (k = 0; k < width; ++k){
 				img_f.read((char *)&pixel, 1);
-				current_img[j][k] = pixel * 1.0 / 255.0;
+				current_img[j][k] = v = pixel * 1.0 / 255.0;
+				e_x += v / n_pixel;
+				e_x2 += v * v / n_pixel;
 			}
 		}
 		//std::cout<<(int)label<<std::endl;
-		mnist_digits[(int)label].push_back(current_img);
+		if (!limit || mnist_digits[(int)label].size() < limit){
+			mnist_digits[(int)label].push_back(current_img);
+		}
+	}
+	s = sqrt(e_x2 - e_x * e_x);
+	for (k = 0; k < 10; ++k){
+		for (std::vector<double**>::iterator itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
+			for (i = 0; i < height; ++i){
+				for (j = 0; j < width; ++j){
+					(*itr)[i][j] -= e_x;
+					(*itr)[i][j] /= s;
+				}
+			}
+		}
 	}
 	img_f.close();   //continue to read label file
 	lbl_f.close();   //continue to read label file
@@ -158,7 +175,7 @@ int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, 
 /* code for freeing all images in memory (tested with valgrind memcheck) */
 
 template <typename T>
-void free_mnist(const unsigned int height, const std::vector<T **> mnist_digits[]){
+void free_mnist(const unsigned int height, const std::vector<T**> mnist_digits[]){
 	unsigned int i, j, k;
 	for (i = 0; i < 10; ++i){
 		for (j = 0; j < mnist_digits[i].size(); ++j){
