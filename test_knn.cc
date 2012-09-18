@@ -6,12 +6,12 @@ int main(int argc, char *argv[]){
 	std::vector<double **> training_mnist_digits[10], testing_mnist_digits[10];
 	srand(time(0));
 	if (argc == 5){
-		load_normalized_mnist(argv[1], argv[2], training_width, training_height, training_mnist_digits, 400);
+		load_normalized_mnist(argv[1], argv[2], training_width, training_height, training_mnist_digits);
 		load_normalized_mnist(argv[1], argv[2], testing_width, testing_height, testing_mnist_digits);
 		if (training_width != testing_width || training_height != testing_height){
 			std::cout<<"warning: training data and testing data have different dimensions\n";
 		}
-		knn<double> c(training_width, training_height, 10, 40, training_mnist_digits);
+		knn<double> c(training_width, training_height, 10, 50, training_mnist_digits);
 		for (i = 0; i < 10; ++i){
 			score = 0;
 			std::cout<<"\nrunning random test cases for "<<i<<"\n";
