@@ -1,6 +1,7 @@
 CC=g++
 CFLAGS=-c -Wall -O3 
 LDFLAGS=
+LIBSVM_PATH='./libsvm'
 TEST_LIBGSL=test_libgsl.o
 TEST_PNG_UTIL=test_png_util.o
 TEST_LOAD_MNIST=test_load_mnist.o
@@ -8,8 +9,9 @@ TEST_PERCEPTRON=test_perceptron.o
 TEST_PERCEPTRON_ALT=test_perceptron_alt.o
 TEST_NAIVE_BAYES=test_naive_bayes.o
 TEST_REG_LSE=test_reg_lse.o
+TEST_SVM_DECISION_BOUNDARY=test_svm_decision_boundary.o
 OBJECTS=$(SOURCES:.cc=.o)
-EXECUTABLES=test_libgsl test_png_util test_load_mnist test_perceptron test_perceptron_alt test_naive_bayes test_reg_lse
+EXECUTABLES=test_libgsl test_png_util test_load_mnist test_perceptron test_perceptron_alt test_naive_bayes test_reg_lse test_svm_decision_boundary
 
 .PHONY: clean
 
@@ -38,6 +40,9 @@ test_naive_bayes: $(TEST_NAIVE_BAYES)
 
 test_reg_lse: $(TEST_REG_LSE)
 	$(CC) $(LDFLAGS) `pkg-config --libs gsl` $(TEST_REG_LSE) -o $@
+
+test_svm_decision_boundary: $(TEST_SVM_DECISION_BOUNDARY)
+	$(CC) $(LDFLAGS) $(LIBSVM_PATH)/svm.cpp $(TEST_SVM_DECISION_BOUNDARY) -o $@
 
 clean:
 	rm -rf *.png *.gch *.o $(EXECUTABLES)
