@@ -11,8 +11,9 @@ TEST_NAIVE_BAYES=test_naive_bayes.o
 TEST_REG_LSE=test_reg_lse.o
 TEST_SVM_DECISION_BOUNDARY_LINEAR=test_svm_decision_boundary_linear.o
 TEST_SVM_DECISION_BOUNDARY_RBF=test_svm_decision_boundary_rbf.o
+TEST_SVM=test_svm.o
 OBJECTS=$(SOURCES:.cc=.o)
-EXECUTABLES=test_libgsl test_png_util test_load_mnist test_perceptron test_perceptron_alt test_naive_bayes test_reg_lse test_svm_decision_boundary_linear test_svm_decision_boundary_rbf
+EXECUTABLES=test_libgsl test_png_util test_load_mnist test_perceptron test_perceptron_alt test_naive_bayes test_reg_lse test_svm_decision_boundary_linear test_svm_decision_boundary_rbf test_svm
 
 
 .PHONY: clean
@@ -48,6 +49,9 @@ test_svm_decision_boundary_linear: $(TEST_SVM_DECISION_BOUNDARY_LINEAR)
 
 test_svm_decision_boundary_rbf: $(TEST_SVM_DECISION_BOUNDARY_RBF)
 	$(CC) $(LDFLAGS) $(LIBSVM_PATH)/svm.cpp $(TEST_SVM_DECISION_BOUNDARY_RBF) -o $@
+
+test_svm: $(TEST_SVM)
+	$(CC) $(LDFLAGS) $(LIBSVM_PATH)/svm.cpp $(TEST_SVM) -o $@
 
 clean:
 	rm -rf *.png *.gch *.o $(EXECUTABLES)
