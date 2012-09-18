@@ -5,7 +5,6 @@
 #define G_RAD 1.0
 
 #include <vector>
-#include <iostream>
 #include "misc.h"
 #include "lin_alg.h"
 #include "kernel.h"    //can choose any function from "kernel.h" as kernel function
