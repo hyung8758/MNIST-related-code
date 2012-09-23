@@ -19,7 +19,7 @@ unsigned int endian_swap(unsigned int & bytes){
 
 /* code for loading sample images of each digit */
 
-int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<unsigned char**> mnist_digits[10]){
+int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<unsigned char**> mnist_digits[10], unsigned int limit = 0){
 	bool img_diff_endian = false, lbl_diff_endian = false; 
 	unsigned char label;
 	unsigned char **current_img;
@@ -79,7 +79,9 @@ int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned in
 			}
 		}
 		//std::cout<<(int)label<<std::endl;
-		mnist_digits[(int)label].push_back(current_img);
+		if (!limit || mnist_digits[(int)label].size() < limit){
+			mnist_digits[(int)label].push_back(current_img);
+		}
 	}
 	img_f.close();   //continue to read label file
 	lbl_f.close();   //continue to read label file
