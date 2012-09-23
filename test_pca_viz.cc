@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
 	std::vector<unsigned char **> S;
 	std::vector<unsigned char **>::const_iterator itr;
 	if (argc == 3){
-		load_mnist(argv[1], argv[2], width, height, mnist_digits, 100);
+		load_mnist(argv[1], argv[2], width, height, mnist_digits, 500);
 		p = new unsigned char*[height];
 		for (i = 0; i < height; ++i){
 			p[i] = new unsigned char[width];
