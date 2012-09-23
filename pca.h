@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <iostream>
+#include <assert.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_eigen.h>
+#include "misc.h"
 
 template <typename T>
 class pca{
@@ -12,7 +14,7 @@ class pca{
 		unsigned int width, height, N;
 		double ***pc;
 	public:
-		pca(const unsigned int _width, const unsigned int _height, const unsigned int _N, const std::vector<T**> S, bool verbose = false) : width(_width), height(_height), N(_N), pc(new double**[N]) {
+		pca(const unsigned int _width, const unsigned int _height, const unsigned int _N, const std::vector<T**> S) : width(_width), height(_height), N(_N), pc(new double**[N]) {
 			unsigned int i, j, k, l, nS = S.size(), m = width * height;
 			double *mean;
 			double **cov;
@@ -61,13 +63,12 @@ class pca{
 			gsl_eigen_symmv (cov_m, eval, evec, wsp);
 			gsl_eigen_symmv_free (wsp);
 			gsl_eigen_symmv_sort (eval, evec, GSL_EIGEN_SORT_ABS_DESC);
-			for (i = 0; i < N; i++){
-				double eval_i = gsl_vector_get (eval, i);
+			for (i = 0; i < N; i++){  //double eval_i = gsl_vector_get (eval, i);
 				gsl_vector_view evec_i = gsl_matrix_column (evec, i);
-				std::cout<<"eigenvalue = "<<eval_i<<"\n";
-				std::cout<<"eigenvector = \n";
-				gsl_vector_fprintf (stdout, &evec_i.vector, "%g");
-				std::cout<<"\n";
+				for (j = 0; j < m; ++j){
+					pc[i][j / width][j % width] = gsl_vector_get(&evec_i.vector, j);
+				}
+				normalize(width, height, pc[i]);
 			}
 			gsl_vector_free (eval);
 			gsl_matrix_free (evec);
@@ -78,6 +79,7 @@ class pca{
 			delete [] mean;
 			delete [] cov;
 		}
+
 		~pca(void){
 			unsigned int i, j;
 			for (i = 0; i < N; ++i){
@@ -87,6 +89,24 @@ class pca{
 				delete [] pc[i];
 			}
 			delete [] pc;
+		}
+
+		double ** const get_pc(unsigned int n) const{
+			assert(n < N);
+			return pc[n];
+		}
+
+		void print_pc(void) const{
+			unsigned int i, j, k; 
+			for (k = 0; k < N; ++k){
+				for (i = 0; i < height; ++i){
+					for (j = 0; j < width; ++j){
+						std::cout<<pc[k][i][j]<<", ";
+					}
+					std::cout<<"\n";
+				}
+				std::cout<<"\n";
+			}
 		}
 };
 
