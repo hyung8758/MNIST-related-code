@@ -1,9 +1,7 @@
 #ifndef PNG_UTIL_H
 #define PNG_UTIL_H
 
-#define BIT_DEPTH 16
-#define COLOR_TYPE 4
-
+#define BIT_DEPTH 8   //16
 #include <assert.h>
 #include <png.h>
 
@@ -17,7 +15,7 @@ void write_png_file(const unsigned int width, const unsigned int height, const c
 	assert(!setjmp(png_jmpbuf(png_ptr)));
 	png_init_io(png_ptr, fp);
 	assert(!setjmp(png_jmpbuf(png_ptr)));
-	png_set_IHDR(png_ptr, info_ptr, width, height, BIT_DEPTH, COLOR_TYPE, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+	png_set_IHDR(png_ptr, info_ptr, width, height, BIT_DEPTH, PNG_COLOR_TYPE_GRAY, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 	png_write_info(png_ptr, info_ptr);
 	assert(!setjmp(png_jmpbuf(png_ptr)));
 	png_write_image(png_ptr, output_pixel);
