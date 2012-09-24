@@ -18,11 +18,11 @@ int main(int argc, char *argv[]){
 		for (i = 0; i < height; ++i){
 			p[i] = new unsigned char[width];
 		}
-		for (k = 0; k < 10; ++k){
-			for (itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
-				S.push_back(*itr);
-			}
+		//for (k = 0; k < 10; ++k){
+		for (itr = mnist_digits[3].begin(); itr != mnist_digits[3].end(); ++itr){
+			S.push_back(*itr);
 		}
+		//}
 		pca <double>result(width, height, NC, S);
 		result.print_pc();
 		for (k = 0; k < NC; ++k){

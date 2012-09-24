@@ -306,6 +306,17 @@ void free_mnist(const unsigned int height, const std::vector<T**> mnist_digits[]
 	}
 }
 
+template <typename T>
+void free_mnist(const unsigned int height, const std::vector<T**> & mnist_digits){
+	unsigned int i, j;
+	for (i = 0; i < mnist_digits.size(); ++i){
+		for (j = 0; j < height; ++j){
+			delete [] mnist_digits[i][j];
+		}
+		delete [] mnist_digits[i];
+	}
+}
+
 /* code for showing an approximate image of a digit */ 
 
 void display_mnist_digit(const unsigned int width, const unsigned int height, unsigned char ** const mnist_digit){
