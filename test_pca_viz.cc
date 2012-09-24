@@ -1,6 +1,7 @@
 #include "load_mnist.h"
 #include "pca.h"
 #include "mnist_viz.h"
+#include <sstream>
 #include <string>
 
 #define NC 10
@@ -24,9 +25,11 @@ int main(int argc, char *argv[]){
 		}
 		pca <double>result(width, height, NC, S);
 		result.print_pc();
-		for (k = 0; k < 10; ++k){
+		for (k = 0; k < NC; ++k){
+			std::stringstream s;
+			s<<k;
 			pixelize<double>(width, height, result.get_pc(k), p);
-			mnist_digit_2_png(width, height, p, std::string("evec_").append(1, '0' + k).append(".png").c_str());
+			mnist_digit_2_png(width, height, p, std::string("evec_").append(s.str()).append(".png").c_str());
 		}
 		free_mnist<double>(height, mnist_digits);
 		for (i = 0; i < height; ++i){

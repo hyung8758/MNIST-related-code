@@ -72,9 +72,9 @@ void normalize(unsigned int width, unsigned int height, double ** v){
 template <typename T>
 void pixelize(unsigned int width, unsigned int height, T ** const v, unsigned char ** p){
 	unsigned int i, j, m = width * height;
-	double min = v[0][0], max = v[0][0], r, c;
+	T min = v[0][0], max = v[0][0], c, r;
 	for (i = 1; i < m; ++i){
-		c = v[i / height][i % height];
+		c = v[i / width][i % width];
 		if (c > max){
 			max = c;
 		}else if (c < min){
@@ -84,7 +84,7 @@ void pixelize(unsigned int width, unsigned int height, T ** const v, unsigned ch
 	r = max - min;
 	for (i = 0; i < height; ++i){
 		for (j = 0; j < width; ++j){
-			p[i][j] = (int)((v[i][j] - min) / r * 255.0);
+			p[i][j] = (unsigned char)((v[i][j] - min) / r * 255.0);
 		}
 	}
 }

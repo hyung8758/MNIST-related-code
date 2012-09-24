@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
 			for (itr = training_mnist_digits[k].begin(); itr != training_mnist_digits[k].end(); ++itr){
 				double **p_img = new double*[1];
 				p_img[0] = result.proj(*itr);
-				pca_testing_mnist_digits[k].push_back(p_img);
+				pca_training_mnist_digits[k].push_back(p_img);
 			}
 		}
 		for (k = 0; k < 10; ++k){
