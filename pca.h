@@ -94,7 +94,7 @@ class pca{
 				p[k] = 0.0;
 				for (i = 0; i < height; ++i){
 					for (j = 0; j < width; ++j){
-						p[k] += v[i][j] * pc[k][i][j];
+						p[k] += v[i][j] * pc[k][i][j] / sqrt(ev[k]);
 					}
 				}
 			}
