@@ -88,6 +88,111 @@ int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned in
 	return 0;
 }
 
+/* code for loading sample images of each digit */
+
+int load_mnist_for_pca(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<double**> mnist_digits[10], unsigned int limit = 0){
+	bool img_diff_endian = false, lbl_diff_endian = false; 
+	unsigned char label;
+	char cb;
+	unsigned int i, j, k, magic_number, img_n_sample, N, lbl_n_sample;
+	double **mean, **current_img;
+	std::vector<double**>::iterator itr;
+	std::fstream img_f(img_fn, std::ios_base::in | std::ios_base::binary), lbl_f(lbl_fn, std::ios_base::in | std::ios_base::binary);
+	if (!img_f.is_open()){
+		std::cerr<<"error opening '"<<img_fn<<"'\n";
+		exit(-1);
+	}
+	if (!lbl_f.is_open()){
+		std::cerr<<"error opening '"<<lbl_fn<<"'\n";
+		exit(-1);
+	}
+	img_f.read((char *)&magic_number, 4);
+	if (magic_number != IMAGE_MAGIC_NUMBER){
+		if (endian_swap(magic_number) != IMAGE_MAGIC_NUMBER){
+			std::cerr<<"error reading '"<<img_fn<<": invalid image file format'\n";
+			exit(1);
+		}
+		img_diff_endian = true;
+	}
+	lbl_f.read((char *)&magic_number, 4);
+	if (magic_number != LABEL_MAGIC_NUMBER){
+		if (endian_swap(magic_number) != LABEL_MAGIC_NUMBER){
+			std::cerr<<"error reading '"<<lbl_fn<<": invalid label file format'\n";
+			exit(1);
+		}
+		lbl_diff_endian = true;
+	}
+	img_f.read((char *)&img_n_sample, 4);
+	if (img_diff_endian){
+		endian_swap(img_n_sample);
+	}
+	lbl_f.read((char *)&lbl_n_sample, 4);
+	if (lbl_diff_endian){
+		endian_swap(lbl_n_sample);
+	}
+	if (img_n_sample != lbl_n_sample){
+		std::cerr<<"error: image file contains "<<img_n_sample<<"sample(s)"<<" and label file contains "<<lbl_n_sample<<"label(s), exiting\n";
+		exit(1);
+	}
+	//std::cout<<img_n_sample<<std::endl;
+	img_f.read((char *)&width, 4);
+	img_f.read((char *)&height, 4);
+	if (img_diff_endian){
+		endian_swap(width);
+		endian_swap(height);
+	}
+	//std::cout<<width<<", "<<height<<std::endl;
+	N = 0;
+	mean = new double*[height];
+	for (i = 0; i < height; ++i){
+		mean[i] = new double[width];
+		for (j = 0; j < width; ++j){
+			mean[i][j] = 0.0;
+		}
+	}
+	for (k = 0; k < img_n_sample; ++k){
+		lbl_f.read((char *)&label, 1);
+		current_img = new double*[height]; 
+		for (i = 0; i < height; ++i){
+			current_img[i] = new double[width];
+			for (j = 0; j < width; ++j){
+				img_f.read(&cb, 1);
+				current_img[i][j] = cb * 1.0;
+			}
+		}
+		//std::cout<<(int)label<<std::endl;
+		if (!limit || mnist_digits[(int)label].size() < limit){
+			mnist_digits[(int)label].push_back(current_img);
+			++N;
+		}
+	}
+	for (k = 0; k < 10; ++k){
+		for (itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
+			for (i = 0; i < height; ++i){
+				for (j = 0; j < width; ++j){
+					mean[i][j] += (*itr)[i][j] * 1.0 / N;
+				}
+			}
+		}
+	}
+	for (k = 0; k < 10; ++k){
+		for (itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
+			for (i = 0; i < height; ++i){
+				for (j = 0; j < width; ++j){
+					(*itr)[i][j] -= mean[i][j];
+				}
+			}
+		}
+	}
+	for (i = 0; i < height; ++i){
+		delete [] mean[i];
+	}
+	delete [] mean;
+	img_f.close();
+	lbl_f.close();
+	return 0;
+}
+
 /* code for loading normalized images of each digit */
 
 int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<double**> mnist_digits[10], bool normalize_variance, unsigned int limit = 0){

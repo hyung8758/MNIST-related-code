@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
 	std::vector<double **> S;
 	std::vector<double **>::const_iterator itr;
 	if (argc == 3){
-		load_normalized_mnist(argv[1], argv[2], width, height, mnist_digits, false, 100);
+		load_mnist_for_pca(argv[1], argv[2], width, height, mnist_digits, 100);
 		p = new unsigned char*[height];
 		for (i = 0; i < height; ++i){
 			p[i] = new unsigned char[width];

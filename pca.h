@@ -12,9 +12,9 @@ template <typename T>
 class pca{
 	private:
 		unsigned int width, height, N;
-		double *eval, ***pc;
+		double *ev, ***pc;
 	public:
-		pca(const unsigned int _width, const unsigned int _height, const unsigned int _N, const std::vector<T**> S) : width(_width), height(_height), N(_N), eval(new double[N]), pc(new double**[N]) {
+		pca(const unsigned int _width, const unsigned int _height, const unsigned int _N, const std::vector<T**> S) : width(_width), height(_height), N(_N), ev(new double[N]), pc(new double**[N]) {
 			unsigned int i, j, k, l, nS = S.size(), m = width * height;
 			double **cov;
 			typename std::vector<T**>::const_iterator itr;
@@ -54,7 +54,8 @@ class pca{
 			gsl_eigen_symmv (cov_m, eval, evec, wsp);
 			gsl_eigen_symmv_free (wsp);
 			gsl_eigen_symmv_sort (eval, evec, GSL_EIGEN_SORT_ABS_DESC);
-			for (i = 0; i < N; i++){  //double eval_i = gsl_vector_get (eval, i);
+			for (i = 0; i < N; i++){
+				ev[i] = gsl_vector_get (eval, i);
 				for (j = 0; j < m; ++j){
 					pc[i][j / width][j % width] = gsl_vector_get(&gsl_matrix_column(evec, i).vector, j);
 				}
@@ -71,7 +72,7 @@ class pca{
 
 		~pca(void){
 			unsigned int i, j;
-			delete [] eval;
+			delete [] ev;
 			for (i = 0; i < N; ++i){
 				for (j = 0; j < height; ++j){
 					delete [] pc[i][j];
@@ -103,7 +104,7 @@ class pca{
 		void print_pc(void) const{
 			unsigned int i, j, k; 
 			for (k = 0; k < N; ++k){
-				std::cout<<"eigenvalue:\n"<<eval[k]<<"\neigenvector:\n";
+				std::cout<<"eigenvalue:\n"<<ev[k]<<"\neigenvector:\n";
 				for (i = 0; i < height; ++i){
 					for (j = 0; j < width; ++j){
 						std::cout<<pc[k][i][j]<<", ";

@@ -10,8 +10,8 @@ int main(int argc, char *argv[]){
 	std::vector<double **>::iterator itr;
 	srand(time(0));
 	if (argc == 5){
-		load_normalized_mnist(argv[1], argv[2], training_width, training_height, training_mnist_digits, false, 100);
-		load_normalized_mnist(argv[1], argv[2], testing_width, testing_height, testing_mnist_digits, false);
+		load_mnist_for_pca(argv[1], argv[2], training_width, training_height, training_mnist_digits, 100);
+		load_mnist_for_pca(argv[1], argv[2], testing_width, testing_height, testing_mnist_digits);
 		if (training_width != testing_width || training_height != testing_height){
 			std::cout<<"warning: training data and testing data have different dimensions\n";
 		}
