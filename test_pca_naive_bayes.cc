@@ -2,7 +2,7 @@
 #include "naive_bayes.h"
 #include "pca.h"
 
-#define N 10    //number of principal components
+#define N 700    //number of principal components
 
 int main(int argc, char *argv[]){
 	unsigned int i, j, k, score, training_width, training_height, testing_width, testing_height;

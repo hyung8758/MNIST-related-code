@@ -10,7 +10,7 @@ int main(int argc, char *argv[]){
 	struct svm_model *model;
 	srand(time(0));
 	if (argc == 5){
-		load_normalized_mnist(argv[1], argv[2], training_width, training_height, training_mnist_digits, 20);  //note: technically should use same the normalization of the training data if the source of testing data is different from the source of the testing data 
+		load_normalized_mnist(argv[1], argv[2], training_width, training_height, training_mnist_digits, false, 20);  //note: technically should use same the normalization of the training data if the source of testing data is different from the source of the testing data 
 		m = training_width * training_height + 1;
 		pt = new svm_node[m];
 		for (k = 0, l = 0; k < 10; ++k){
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
 		param.weight_label = 0;
 		param.weight = 0;
 		model = svm_train(&prob, &param);
-		load_normalized_mnist(argv[1], argv[2], testing_width, testing_height, testing_mnist_digits, 20);
+		load_normalized_mnist(argv[1], argv[2], testing_width, testing_height, testing_mnist_digits, false, 20);
 		if (training_width != testing_width || training_height != testing_height){
 			std::cout<<"warning: training set and testing set have different dimensions\n";
 		}
