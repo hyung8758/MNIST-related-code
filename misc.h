@@ -69,7 +69,8 @@ void normalize(unsigned int width, unsigned int height, double ** v){
 	}
 }
 
-void pixelize(unsigned int width, unsigned int height, double ** const v, unsigned char ** p){
+template <typename T>
+void pixelize(unsigned int width, unsigned int height, T ** const v, unsigned char ** p){
 	unsigned int i, j, m = width * height;
 	double min = v[0][0], max = v[0][0], r, c;
 	for (i = 1; i < m; ++i){

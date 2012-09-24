@@ -90,7 +90,7 @@ int load_mnist(const char * const img_fn, const char * const lbl_fn, unsigned in
 
 /* code for loading normalized images of each digit */
 
-int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<double**> mnist_digits[10], unsigned int limit = 0){
+int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, unsigned int & width, unsigned int & height, std::vector<double**> mnist_digits[10], bool normalize_variance, unsigned int limit = 0){
 	bool img_diff_endian = false, lbl_diff_endian = false; 
 	unsigned char label, pixel;
 	unsigned int i, j, k, magic_number, img_n_sample, lbl_n_sample, n_pixel;
@@ -159,12 +159,24 @@ int load_normalized_mnist(const char * const img_fn, const char * const lbl_fn, 
 		}
 	}
 	s = sqrt(e_x2 - e_x * e_x);
-	for (k = 0; k < 10; ++k){
-		for (std::vector<double**>::iterator itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
-			for (i = 0; i < height; ++i){
-				for (j = 0; j < width; ++j){
-					(*itr)[i][j] -= e_x;
-					(*itr)[i][j] /= s;
+	if (normalize_variance){
+		for (k = 0; k < 10; ++k){
+			for (std::vector<double**>::iterator itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
+				for (i = 0; i < height; ++i){
+					for (j = 0; j < width; ++j){
+						(*itr)[i][j] -= e_x;
+						(*itr)[i][j] /= s;
+					}
+				}
+			}
+		}
+	}else{
+		for (k = 0; k < 10; ++k){
+			for (std::vector<double**>::iterator itr = mnist_digits[k].begin(); itr != mnist_digits[k].end(); ++itr){
+				for (i = 0; i < height; ++i){
+					for (j = 0; j < width; ++j){
+						(*itr)[i][j] -= e_x;
+					}
 				}
 			}
 		}

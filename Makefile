@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -Wall -O3 
+CFLAGS=-g -c -Wall -O3 
 LDFLAGS=
 LIBSVM_PATH=./libsvm
 TEST_LIBGSL=test_libgsl.o
@@ -10,13 +10,14 @@ TEST_PCA_VIZ=test_pca_viz.o
 TEST_PERCEPTRON=test_perceptron.o
 TEST_PERCEPTRON_ALT=test_perceptron_alt.o
 TEST_NAIVE_BAYES=test_naive_bayes.o
+TEST_PCA_NAIVE_BAYES=test_pca_naive_bayes.o
 TEST_REG_LSE=test_reg_lse.o
 TEST_SVM_DECISION_BOUNDARY_LINEAR=test_svm_decision_boundary_linear.o
 TEST_SVM_DECISION_BOUNDARY_RBF=test_svm_decision_boundary_rbf.o
 TEST_SVM=test_svm.o
 TEST_KNN=test_knn.o
 OBJECTS=$(SOURCES:.cc=.o)
-EXECUTABLES=test_libgsl test_png_util test_load_mnist test_viz test_pca_viz test_perceptron test_perceptron_alt test_naive_bayes test_reg_lse test_svm_decision_boundary_linear test_svm_decision_boundary_rbf test_svm test_knn
+EXECUTABLES=test_libgsl test_png_util test_load_mnist test_viz test_pca_viz test_perceptron test_perceptron_alt test_naive_bayes test_pca_naive_bayes test_reg_lse test_svm_decision_boundary_linear test_svm_decision_boundary_rbf test_svm test_knn
 
 
 .PHONY: clean
@@ -48,7 +49,10 @@ test_perceptron_alt: $(TEST_PERCEPTRON_ALT)
 	$(CC) $(LDFLAGS) $(TEST_PERCEPTRON_ALT) -o $@
 
 test_naive_bayes: $(TEST_NAIVE_BAYES)
-	$(CC) $(LDFLAGS) $(TEST_NAIVE_BAYES) -o $@
+	$(CC) $(LDFLAGS) `pkg-config --libs gsl` $(TEST_NAIVE_BAYES) -o $@
+
+test_pca_naive_bayes: $(TEST_PCA_NAIVE_BAYES)
+	$(CC) $(LDFLAGS) `pkg-config --libs gsl` $(TEST_PCA_NAIVE_BAYES) -o $@
 
 test_reg_lse: $(TEST_REG_LSE)
 	$(CC) $(LDFLAGS) `pkg-config --libs gsl` $(TEST_REG_LSE) -o $@
