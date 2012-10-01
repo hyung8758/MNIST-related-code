@@ -5,7 +5,7 @@ this repository contains code for some simple experiments with the MNIST dataset
 
 NOTE: it appears that SVM is the best approach in terms of generalizing to the entire dataset
 
-for exmaple: one can test this method by these steps: 
+for exmaple: one can test this method with these steps: 
 
 make clean && make test_svm
 
